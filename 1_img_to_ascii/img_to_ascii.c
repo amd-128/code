@@ -14,7 +14,7 @@ int main(int argc,char** argv)
     unsigned char* img_data=NULL;
     int img_weight,img_height,channels_num;
     char* output_file=NULL;
-    while((o=getopt_long(argc,argv,"i",longopts,&longindex))!=-1)
+    while((o=getopt_long(argc,argv,"i:",longopts,&longindex))!=-1)
     {
         switch(o)
         {
@@ -24,7 +24,7 @@ int main(int argc,char** argv)
                 img_data=stbi_load(optarg,&img_weight,&img_height,&channels_num,0);
                 if(img_data==NULL)
                 {
-                    fprintf(stderr,"Load image failed!");
+                    fprintf(stderr,"哎呀,加载文件失败了呢~检查检查文件吧~杂鱼~\n");
                     exit(1);
                 }
             }
@@ -36,36 +36,39 @@ int main(int argc,char** argv)
             break;
         case '?':
         default:
-            fprintf(stderr,"未知选项");
+            fprintf(stderr,"杂鱼~选项写错了呢~");
             exit(1);
         }
     }
     char* img_grey_str="QWBm#UZXS2onvIli|+=;:-. ";
     int img_grey_str_len=strlen(img_grey_str);
     int per_char_in_pixel=255/img_grey_str_len+1;
-    for(int i=0;i<img_weight*img_height*channels_num;i+=channels_num)
+    if(img_data!=NULL)
     {
-        if(i%img_weight*channels_num==0)
-            putchar('\n');
-        switch(channels_num)
+        for(int i=0;i<img_weight*img_height*channels_num;i+=channels_num)
         {
-        case 1:
-            printf("%c",img_grey_str[img_data[i]/per_char_in_pixel]);
-            break;
-        case 2:
-            float alpha_2=(float)img_data[i+1]/255.0f;
-            printf("%c",img_grey_str[(int)((img_data[i]*alpha_2)/per_char_in_pixel)]);
-            break;
-        case 3:
-            printf("%c",img_grey_str[(img_data[i]+img_data[i+1]+img_data[i+2])/3/per_char_in_pixel]);
-            break;
-        case 4:
-            float alpha_4=(float)img_data[i+3]/255.0f;
-            printf("%c",img_grey_str[(int)((((img_data[i]+img_data[i+1]+img_data[i+2])/3)*alpha_4)/per_char_in_pixel)]);
-            break;
-        default:
-            exit(1);
+            if(i%img_weight*channels_num==0)
+                putchar('\n');
+            switch(channels_num)
+            {
+            case 1:
+                printf("%c",img_grey_str[img_data[i]/per_char_in_pixel]);
+                break;
+            case 2:
+                float alpha_2=(float)img_data[i+1]/255.0f;
+                printf("%c",img_grey_str[(int)((img_data[i]*alpha_2)/per_char_in_pixel)]);
+                break;
+            case 3:
+                printf("%c",img_grey_str[(img_data[i]+img_data[i+1]+img_data[i+2])/3/per_char_in_pixel]);
+                break;
+            case 4:
+                float alpha_4=(float)img_data[i+3]/255.0f;
+                printf("%c",img_grey_str[(int)((((img_data[i]+img_data[i+1]+img_data[i+2])/3)*alpha_4)/per_char_in_pixel)]);
+                break;
+            default:
+                exit(1);
+            }
         }
+        putchar('\n');
     }
-    putchar('\n');
 }
